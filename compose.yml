@@ -1,0 +1,40 @@
+services:
+  postgres:
+    container_name: whatsnow-postgres
+    image: postgres
+    volumes:
+      - postgres:/data/postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: whatsnow
+    ports:
+      - 54321:5432
+    networks:
+      - whatsnow-network
+    restart: unless-stopped
+  keycloak:
+    container_name: whatsnow-keycloak
+    image: quay.io/keycloak/keycloak:26.0.0
+    volumes:
+      - keycloak:/opt/keycloak/data/
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 9090:8080
+    networks:
+      - whatsnow-network
+    command:
+      - "start-dev"
+
+networks:
+  whatsnow-network:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local
+  keycloak:
+    driver: local
